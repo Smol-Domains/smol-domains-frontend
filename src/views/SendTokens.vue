@@ -185,6 +185,7 @@ import Erc20Abi from "../abi/Erc20.json";
 import tldsJson from '../abi/tlds.json';
 import tldAbi from '../abi/PunkTLD.json';
 import WaitingToast from "../components/toasts/WaitingToast.vue";
+import useChainHelpers from "../hooks/useChainHelpers";
 
 export default {
   name: "SendTokens",
@@ -216,7 +217,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters("network", ["getBlockExplorerBaseUrl", "getChainId", "getFallbackProvider", "getNetworkName", "getTokens"]),
+    ...mapGetters("network", ["getBlockExplorerBaseUrl", "getChainId", "getNetworkName", "getTokens"]),
     ...mapGetters("user", ["getUserBalance"]),
     ...mapGetters("punk", ["getTldAddressesKey", "getTldAddresses", "getTldAbi"]),
 
@@ -520,8 +521,9 @@ export default {
   setup() {
     const { address, balance, signer } = useEthers()
     const toast = useToast();
-
-    return { address, balance, signer, toast }
+    const { getFallbackProvider } = useChainHelpers();
+    
+    return { address, balance, getFallbackProvider, signer, toast }
   },
 
   watch: {

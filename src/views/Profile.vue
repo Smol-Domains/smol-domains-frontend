@@ -31,7 +31,7 @@
         <div class="col-md-6 mb-3">
           <div class="container text-center">
             <h3>Balance</h3>
-            <p class="text-break">{{ getUserBalance }} {{getNetworkCurrency}}</p>
+            <p class="text-break">{{ getMagicBalance }} MAGIC</p>
           </div>
         </div>
       </div>
@@ -106,13 +106,16 @@ import { useToast, TYPE } from "vue-toastification";
 import MyDomain from '../components/MyDomain.vue';
 import Sidebar from '../components/Sidebar.vue';
 import Referral from '../components/Referral.vue';
+import erc20Abi from '../abi/Erc20.json';
+import useChainHelpers from "../hooks/useChainHelpers";
 
 export default {
   name: "Profile",
 
   data() {
     return {
-      existingDomain: null
+      existingDomain: null,
+      loading: false
     }
   },
 
@@ -123,9 +126,8 @@ export default {
   },
 
   computed: {
-    ...mapGetters("user", ["getUserAddress", "getUserBalance", "getUserAllDomainNames", "getUserSelectedNameData"]),
-    ...mapGetters("network", ["getNetworkCurrency"]),
-    ...mapGetters("punk", ["getFactoryContract", "getTlds", "getTldAddresses", "getTldAbi"]),
+    ...mapGetters("smol", ["getSmolTldAddress"]),
+    ...mapGetters("user", ["getUserAddress", "getUserSelectedNameData", "getUserAllDomainNames", "getMagicAddress", "getMagicAllowance", "getMagicBalance", "getMagicContract"]),
 
     customData() {
       if (this.getUserSelectedNameData) {
@@ -156,6 +158,8 @@ export default {
         return true;
       } else if (this.existingDomain.includes("#")) {
         return true;
+      } else if (!this.existingDomain.includes(".smol")) {
+        return true;
       }
     }
   },
@@ -166,33 +170,24 @@ export default {
     async addExistingDomain() {
       const existingDomainLower = this.existingDomain.toLowerCase();
       const existingDomainParts = existingDomainLower.split(".");
-
-      // get TLD address and create contract
-      const tldAddress = await this.getFactoryContract.tldNamesAddresses("."+existingDomainParts[1]);
-
-      if (tldAddress !== ethers.constants.AddressZero) {
-        const intfc = new ethers.utils.Interface(this.getTldAbi);
-        const contract = new ethers.Contract(tldAddress, intfc, this.signer);
-
-        const checkDomainHolder = await contract.getDomainHolder(existingDomainParts[0]);
-
-        if (String(checkDomainHolder)===String(this.address)) {
-          this.addDomainManually(existingDomainLower);
-          this.toast("Domain successfully added.", {type: TYPE.SUCCESS});
-        } else {
-          this.toast("This domain is not owned by your currently connected address.", {type: TYPE.ERROR});
-        }
+      const intfc = new ethers.utils.Interface(tldAbi);
+      const contract = new ethers.Contract(this.getSmolTldAddress, intfc, this.signer);
+      const checkDomainHolder = await contract.getDomainHolder(existingDomainParts[0]);
+      if (String(checkDomainHolder)===String(this.address)) {
+        this.addDomainManually(existingDomainLower);
+        this.toast("Domain successfully added.", {type: TYPE.SUCCESS});
       } else {
-        this.toast("This TLD does not exist.", {type: TYPE.ERROR});
+        this.toast("This domain is not owned by your currently connected address.", {type: TYPE.ERROR});
       }
-    }
+    },
   },
 
   setup() {
     const { address, isActivated, signer } = useEthers();
     const toast = useToast();
+    const { getFallbackProvider } = useChainHelpers();
 
-    return { address, isActivated, signer, toast }
+    return { address, getFallbackProvider, isActivated, signer, toast }
   },
 
 }

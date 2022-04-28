@@ -1,30 +1,9 @@
 <template>
   <div class="container text-center">
-    <h1 class="mt-5">Permissionless Web3 Domains</h1>
+    <h1 class="mt-5 headline">Mint Your .smol Domain!</h1>
 
-    <div v-if="isActivated" class="dropdown mt-5">
-      Choose network: 
-
-      <button class="mx-3 btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-        {{getNetworkName}}
-      </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-        <li>
-          <span 
-            class="dropdown-item" 
-            v-for="network in getSupportedNetworkNames"
-            @click="changeNetwork(network)"
-          >{{network}}</span>
-        </li>
-      </ul>
-    </div>
-
-    <div v-if="!isActivated" class="mt-5">
-      <button class="btn btn-primary" @click="open">Connect wallet</button>
-    </div>
-
-    <div class="d-flex justify-content-center domain-input-container">
-      <div class="input-group mb-3 domain-input input-group-lg">
+    <div class="d-flex justify-content-center domain-input-container mb-3 mt-5">
+      <div class="input-group domain-input input-group-lg">
         <input
           v-model="chosenDomainName" 
           placeholder="enter domain name"
@@ -32,45 +11,115 @@
           class="form-control text-end" 
           aria-label="Text input with dropdown button"
         >
-        
-        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <span v-if="isActivated && !selectedTld" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          {{selectedTld}}
-        </button>
 
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li><span class="dropdown-item" v-for="tld in enabledBuyingTlds" @click="changeTld(tld)">{{tld}}</span></li>
-        </ul>
+        <span class="input-group-text tld-addon">
+          <span v-if="loading" class="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"></span>
+          <span>.smol</span>
+        </span>
       </div>
     </div>
 
-    <p class="error" v-if="buyNotValid(chosenDomainName).invalid">
-      <small>
+    <p class="error">
+      <small v-if="buyNotValid(chosenDomainName).invalid">
         <em>{{ buyNotValid(chosenDomainName).message }}</em>
       </small>
     </p>
 
-    <p class="mt-3">
-      Domain price: {{this.parseValue(this.selectedPrice)}} {{getNetworkCurrency}}
+    <p class="mt-5">
+      Domain price: {{getWrapperTldPrice}} MAGIC
     </p>
 
-    <button class="btn btn-primary btn-lg mt-1 buy-button" @click="buyDomain" :disabled="waiting || buyNotValid(chosenDomainName).invalid">
-      <span v-if="waiting" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Buy domain
+    <!-- Wrapper contract paused -->
+    <button v-if="isActivated && getWrapperPaused" class="btn btn-primary btn-lg mt-3 buy-button" :disabled="true">
+      <span v-if="getWrapperPaused">Buying paused</span>
     </button>
 
+    <!-- Too low MAGIC balance -->
+    <button v-if="isActivated && isNetworkSupported && !getWrapperPaused && !getCanUserBuy" class="btn btn-primary btn-lg mt-3 buy-button" @click="approveMagic" :disabled="waiting || buyNotValid(chosenDomainName).invalid || !hasUserEnoughMagic">
+      <span>Not eligible</span>
+    </button>
+
+    <!-- Too low MAGIC balance -->
+    <button v-if="isActivated && isNetworkSupported && !getWrapperPaused && !hasUserEnoughMagic && getCanUserBuy" class="btn btn-primary btn-lg mt-3 buy-button" @click="approveMagic" :disabled="waiting || buyNotValid(chosenDomainName).invalid || !hasUserEnoughMagic">
+      <span>Your MAGIC balance is too low</span>
+    </button>
+
+    <!-- Approve MAGIC -->
+    <button data-bs-toggle="modal" data-bs-target="#approveMagicModal" v-if="isActivated && getCanUserBuy && isNetworkSupported && !getWrapperPaused && !hasEnoughMagicAllowance && hasUserEnoughMagic" class="btn btn-primary btn-lg mt-3 buy-button" :disabled="waiting || buyNotValid(chosenDomainName).invalid || !hasUserEnoughMagic">
+      <span v-if="waiting" class="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"></span>
+      <span>Approve MAGIC</span>
+    </button>
+
+    <p v-if="isActivated && isNetworkSupported && !getWrapperPaused && getCanUserBuy && !hasEnoughMagicAllowance && hasUserEnoughMagic" class="mt-1">
+      <small><strong>Important:</strong> You will need to complete 2 transactions: Approve MAGIC + Buy Domain.</small>
+    </p>
+
+    <!-- Buy domain -->
+    <button v-if="isActivated && isNetworkSupported && getCanUserBuy && !getWrapperPaused && hasEnoughMagicAllowance && hasUserEnoughMagic" class="btn btn-primary btn-lg mt-3 buy-button" @click="buyDomain" :disabled="waiting || buyNotValid(chosenDomainName).invalid || !hasUserEnoughMagic">
+      <span v-if="waiting" class="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"></span>
+      <span>Buy domain</span>
+    </button>
+
+    <!-- Connect Wallet -->
+    <button v-if="!isActivated" class="btn btn-primary btn-lg mt-3 btn-Disconnected" @click="open">Connect wallet</button>
+
+    <div v-if="isActivated && !isNetworkSupported" class="mt-4">
+      <button class="btn btn-primary btn-lg btn-Disconnected" @click="changeNetwork('Arbitrum')">Switch to Arbitrum</button>
+    </div>
+    
   </div>
-  
+
+  <Referral v-if="isActivated" />
+
+
+  <!-- Approve MAGIC Modal -->
+  <div class="modal fade" id="approveMagicModal" tabindex="-1" aria-labelledby="approveMagicModalLabel" aria-hidden="true" modal-dialog-centered>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="approveMagicModalLabel">Approve MAGIC</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <p>
+              If you plan to mint multiple domains, consider giving the minting contract a higher MAGIC approval. 
+              With each domain buy, the total approval amount is reduced by {{getWrapperTldPrice}} MAGIC. (Worry not, 
+              redundant approval amount can later be reduced to 0.)
+            </p>
+
+            Approval for <input type="text" id="recipient-name" v-model="chosenAllowance"> MAGIC.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button 
+            type="button" 
+            @click="approveMagic" 
+            class="btn btn-secondary"
+            :disabled="selectedAllowanceTooLow" 
+            >
+              <span v-if="!selectedAllowanceTooLow">Approve MAGIC</span>
+              <span v-if="selectedAllowanceTooLow">Approval lower than domain price</span>
+            </button>
+
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script lang="ts">
+<script>
 import { ethers } from 'ethers';
-import { displayEther, useBoard, useEthers } from 'vue-dapp';
+import { useBoard, useEthers } from 'vue-dapp';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import { useToast, TYPE } from "vue-toastification";
 import WaitingToast from "../components/toasts/WaitingToast.vue";
+import Referral from '../components/Referral.vue';
 import useDomainHelpers from "../hooks/useDomainHelpers";
 import useChainHelpers from "../hooks/useChainHelpers";
+import SmolPunkDomainsAbi from "../abi/SmolPunkDomains.json";
+import erc20Abi from '../abi/Erc20.json';
 
 export default {
   name: "Home",
@@ -78,47 +127,136 @@ export default {
   data() {
     return {
       chosenDomainName: null,
-      enabledBuyingTlds: [],
-      selectedTld: null,
-      selectedPrice: null,
+      chosenAllowance: null,
+      loading: false, // loading data
       waiting: false, // waiting for TX to complete
+      wrapperContract: null
     }
+  },
+
+  components: {
+    Referral
   },
 
   created() {
-    if (this.getDomainPrices) {
-      this.checkEnabledBuying();
-    }
+    this.chosenAllowance = this.getWrapperTldPrice;
   },
 
   computed: {
-    ...mapGetters("network", ["getBlockExplorerBaseUrl", "getNetworkName", "getNetworkCurrency", "getSupportedNetworks", "getSupportedNetworkNames"]),
-    ...mapGetters("punk", ["getTlds", "getTldAddresses", "getDomainPrices", "getTldAbi"]),
+    ...mapGetters("user", ["getMagicAddress", "getMagicAllowance", "getMagicBalance", "getCanUserBuy"]),
+    ...mapGetters("network", ["getBlockExplorerBaseUrl"]),
+    ...mapGetters("smol", ["getSmolWrapperAddress", "getSmolTldContract", "getWrapperTldPrice", "getWrapperPaused"]),
+
+    selectedAllowanceTooLow() {
+      if (Number(this.chosenAllowance) >= Number(this.getWrapperTldPrice)) {
+        return false;
+      }
+
+      return true;
+    },
 
     domainLowerCase() {
       return this.chosenDomainName.toLowerCase();
+    },
+
+    hasEnoughMagicAllowance() {
+      if (this.address && Number(this.getWrapperTldPrice) > 0 && Number(this.getMagicBalance) > 0) {
+        if (Number(this.getMagicAllowance) >= Number(this.getWrapperTldPrice)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    hasUserEnoughMagic() {
+      if (this.address && Number(this.getWrapperTldPrice) > 0 && Number(this.getMagicBalance) > 0) {
+        if (Number(this.getMagicBalance) >= Number(this.getWrapperTldPrice)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    isNetworkSupported() {
+      if (this.isActivated) {
+        if (this.chainId === 42161) {
+          return true;
+        }
+      }
+
+      return false;
     }
   },
 
   methods: {
-    ...mapActions("punk", ["fetchTlds"]),
-    ...mapMutations("user", ["addDomainManually"]),
+    ...mapActions("user", ["fetchCanUserBuy"]),
+    ...mapMutations("user", ["addDomainManually", "setMagicAllowance"]),
+
+    async approveMagic() {
+      this.waiting = true;
+
+      // MAGIC contract
+      const magicIntfc = new ethers.utils.Interface(erc20Abi);
+      const magicContractSigner = new ethers.Contract(this.getMagicAddress, magicIntfc, this.signer);
+
+      try {
+        const tx = await magicContractSigner.approve(
+          this.getSmolWrapperAddress, // spender (wrapper contract)
+          ethers.utils.parseUnits(this.chosenAllowance, "mwei") // amount (in mwei, 6 decimals)
+        );
+
+        const toastWait = this.toast(
+          {
+            component: WaitingToast,
+            props: {
+              text: "Please wait for your transaction to confirm. Click on this notification to see transaction in the block explorer."
+            }
+          },
+          {
+            type: TYPE.INFO,
+            onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
+          }
+        );
+
+        document.getElementById('approveMagicModal').click(); // close the modal
+
+        const receipt = await tx.wait();
+
+        if (receipt.status === 1) {
+          this.toast.dismiss(toastWait);
+          this.toast("You have successfully set the allowance! Now proceed with buying the domain.", {
+            type: TYPE.SUCCESS,
+            onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
+          });
+          this.setMagicAllowance(this.chosenAllowance);
+          this.waiting = false;
+        } else {
+          this.toast.dismiss(toastWait);
+          this.toast("Transaction has failed.", {
+            type: TYPE.ERROR,
+            onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
+          });
+          console.log(receipt);
+          this.waiting = false;
+        }
+
+      } catch (e) {
+        console.log(e)
+        this.waiting = false;
+        this.toast(e.message, {type: TYPE.ERROR});
+      }
+
+      this.waiting = false;
+    },
 
     async buyDomain() {
       this.waiting = true;
-      const fullDomainName = this.domainLowerCase + this.selectedTld;
+      const fullDomainName = this.domainLowerCase + ".smol";
 
-      // create TLD contract object
-      const intfc = new ethers.utils.Interface(this.getTldAbi);
-      const contract = new ethers.Contract(this.getTldAddresses[this.selectedTld], intfc, this.signer);
-
-      // check if price is missing
-      if (!this.selectedPrice) {
-        this.selectedPrice = await contract.price();
-      }
-
-      // check if domain is already taken
-      const existingHolder = await contract.getDomainHolder(this.domainLowerCase);
+      // check if domain already minted
+      const existingHolder = await this.getSmolTldContract.getDomainHolder(this.domainLowerCase);
 
       if (existingHolder !== ethers.constants.AddressZero) {
         this.toast("Sorry, but this domain name is already taken...", {type: TYPE.ERROR});
@@ -126,7 +264,10 @@ export default {
         return;
       }
 
-      // buy/mint domain
+      // wrapper contract (with signer)
+      const wrapperIntfc = new ethers.utils.Interface(SmolPunkDomainsAbi);
+      const wrapperContractSigner = new ethers.Contract(this.getSmolWrapperAddress, wrapperIntfc, this.signer);
+
       try {
         let referral = localStorage.getItem("referral");
 
@@ -134,49 +275,44 @@ export default {
           referral = ethers.constants.AddressZero;
         }
 
-        const tx = await contract.mint(
+        const tx = await wrapperContractSigner.mint(
           this.domainLowerCase,
           this.address,
-          referral,
+          referral
+        );
+
+        const toastWait = this.toast(
           {
-            value: String(this.selectedPrice)
+            component: WaitingToast,
+            props: {
+              text: "Please wait for your transaction to confirm. Click on this notification to see transaction in the block explorer."
+            }
+          },
+          {
+            type: TYPE.INFO,
+            onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
           }
         );
 
-        if (tx) {
-          const toastWait = this.toast(
-            {
-              component: WaitingToast,
-              props: {
-                text: "Please wait for your transaction to confirm. Click on this notification to see transaction in the block explorer."
-              }
-            },
-            {
-              type: TYPE.INFO,
-              onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
-            }
-          );
+        const receipt = await tx.wait();
 
-          const receipt = await tx.wait();
-
-          if (receipt.status === 1) {
-            this.toast.dismiss(toastWait);
-            this.toast("You have successfully bought the domain!", {
-              type: TYPE.SUCCESS,
-              onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
-            });
-            this.fetchTlds();
-            this.addDomainManually(fullDomainName);
-            this.waiting = false;
-          } else {
-            this.toast.dismiss(toastWait);
-            this.toast("Transaction has failed.", {
-              type: TYPE.ERROR,
-              onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
-            });
-            console.log(receipt);
-            this.waiting = false;
-          }
+        if (receipt.status === 1) {
+          this.toast.dismiss(toastWait);
+          this.toast("You have successfully bought the domain!", {
+            type: TYPE.SUCCESS,
+            onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
+          });
+          this.addDomainManually(fullDomainName);
+          this.fetchCanUserBuy();
+          this.waiting = false;
+        } else {
+          this.toast.dismiss(toastWait);
+          this.toast("Transaction has failed.", {
+            type: TYPE.ERROR,
+            onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
+          });
+          console.log(receipt);
+          this.waiting = false;
         }
 
       } catch (e) {
@@ -197,82 +333,29 @@ export default {
       });
     },
 
-    changeTld(tldName) {
-      this.selectedTld = tldName;
-      this.selectedPrice = this.getDomainPrices[tldName];
-    },
-
-    async checkEnabledBuying() {
-      this.enabledBuyingTlds = [];
-
-      let counter = 0;
-
-      if (this.getTlds) {
-        for (let tld of this.getTlds) {
-          // construct contract
-          const intfc = new ethers.utils.Interface(this.getTldAbi);
-          const tldContract = new ethers.Contract(this.getTldAddresses[tld], intfc, this.signer);
-
-          const canBuy = await tldContract.buyingEnabled();
-
-          if (canBuy) {
-            this.enabledBuyingTlds.push(tld);
-
-            if (counter === 0) {
-              this.selectedTld = tld;
-              counter++;
-            }
-          }
-        }
-      }
-
-      if (this.enabledBuyingTlds) {
-        this.selectedTld = this.enabledBuyingTlds[0];
-      }
-
-      this.selectedPrice = this.getDomainPrices[this.selectedTld];
-    },
-
-    parseValue(someVal) {
-      if (someVal) {
-        return ethers.utils.formatEther(someVal);
-      }
-    }
   },
 
   setup() {
-    const { open } = useBoard()
-    const { address, chainId, isActivated, signer } = useEthers()
+    const { open } = useBoard();
+    const { address, chainId, isActivated, signer } = useEthers();
     const toast = useToast();
     const { buyNotValid } = useDomainHelpers();
     const { switchNetwork } = useChainHelpers();
 
-    return { address, buyNotValid, chainId, isActivated, displayEther, open, signer, switchNetwork, toast }
-  },
-
-  watch: {
-    chainId(newVal, oldVal) {
-      if (newVal != oldVal) {
-        this.selectedTld = null;
-      }
-    },
-
-    getTlds(newVal, oldVal) {
-      if (newVal && this.getDomainPrices) {
-        this.checkEnabledBuying();
-      }
-    },
-
-    getDomainPrices(newVal, oldVal) {
-      if (newVal) {
-        this.checkEnabledBuying();
-      }
-    }
+    return { address, buyNotValid, chainId, isActivated, open, signer, switchNetwork, toast }
   }
 }
 </script>
 
+
 <style scoped>
+.and {
+  font-size: 1.7em;
+  vertical-align: bottom;
+  padding-left: 0.2em;
+  padding-right: 0.1em;
+}
+
 .buy-button {
   margin-bottom: 50px;
 }
@@ -282,11 +365,15 @@ export default {
 }
 
 .domain-input-container {
-  margin-top: 80px;
+  margin-top: 30px;
 }
 
-.dropdown-item {
-  cursor: pointer;
+.error {
+  color: #DBDFEA;
+}
+
+.tld-addon {
+  background-color: white;
 }
 
 @media only screen and (max-width: 767px) {

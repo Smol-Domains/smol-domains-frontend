@@ -19,6 +19,7 @@ import Navbar from './components/Navbar.vue';
 import Footer from './components/Footer.vue';
 import tldsJson from './abi/tlds.json';
 import tldAbi from './abi/PunkTLD.json';
+import useChainHelpers from "./hooks/useChainHelpers";
 
 export default {
   components: {
@@ -28,35 +29,35 @@ export default {
 
   created() {
     this.fetchReferrer();
+    this.setTldContract();
+    this.fetchWrapperContractData();
 
     // reset localstorage
-    const v2 = localStorage.getItem("punkv2");
+    const v2 = localStorage.getItem("smolv1");
 
     if (!v2) {
       localStorage.clear();
       localStorage.setItem("connected", "null");
-      localStorage.setItem("punkv2", "true");
+      localStorage.setItem("smolv1", "true");
     }
   },
 
   computed: {
     ...mapGetters("user", ["getUserSelectedName"]),
-    ...mapGetters("network", ["getFallbackProvider"]),
   },
 
   methods: {
-    ...mapActions("punk", ["fetchTlds"]),
-    ...mapActions("user", ["fetchUserDomainNames"]),
+    ...mapActions("user", ["fetchUserDomainNames", "fetchUserMagicData"]),
+    ...mapActions("smol", ["fetchWrapperContractData"]),
 
     ...mapMutations("user", ["setUserData"]),
     ...mapMutations("network", ["setNetworkData"]),
-    ...mapMutations("punk", ["setFactoryContract"]),
+    ...mapMutations("smol", ["setTldContract"]),
 
     fetchAllData() {
       this.setUserData();
+      this.fetchUserMagicData();
       this.setNetworkData();
-      this.setFactoryContract();
-      this.fetchTlds();
     },
 
     async fetchReferrer() {
@@ -95,6 +96,7 @@ export default {
   setup() {
     const { address, chainId, isActivated } = useEthers();
     const { connect } = useWallet();
+    const { getFallbackProvider } = useChainHelpers();
 
     onMounted(() => {
       // if user already connected via MetaMask before, connect them automatically on the next visit
@@ -104,7 +106,7 @@ export default {
     })
 
     return {
-      address, chainId, connect, isActivated
+      address, chainId, connect, getFallbackProvider, isActivated
     }
   },
 
@@ -112,6 +114,7 @@ export default {
     address(newVal, oldVal) {
       if (newVal) {
         this.setUserData();
+        this.fetchUserMagicData();
         this.fetchUserDomainNames(true);
       }
     },
