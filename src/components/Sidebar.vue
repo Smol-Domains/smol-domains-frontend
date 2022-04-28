@@ -29,11 +29,9 @@
       <i class="bi bi-window-plus"></i> Browser extension
     </router-link>
 
-    <!--
-    <router-link class="btn btn-sidebar text-start" to="/buy-tld">
-      <i class="bi bi-window-plus"></i> Buy TLD
+    <router-link class="btn btn-sidebar text-start" to="/allowance">
+      <i class="bi bi-currency-dollar"></i> $MAGIC allowance
     </router-link>
-    -->
 
   </div>
 </template>

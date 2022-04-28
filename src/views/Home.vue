@@ -204,7 +204,7 @@ export default {
       try {
         const tx = await magicContractSigner.approve(
           this.getSmolWrapperAddress, // spender (wrapper contract)
-          ethers.utils.parseUnits(this.chosenAllowance, "mwei") // amount (in mwei, 6 decimals)
+          ethers.utils.parseEther(this.chosenAllowance) // amount
         );
 
         const toastWait = this.toast(
@@ -343,6 +343,12 @@ export default {
     const { switchNetwork } = useChainHelpers();
 
     return { address, buyNotValid, chainId, isActivated, open, signer, switchNetwork, toast }
+  },
+
+  watch: {
+    getWrapperTldPrice(newVal, oldVal) {
+      this.chosenAllowance = this.getWrapperTldPrice;
+    }
   }
 }
 </script>

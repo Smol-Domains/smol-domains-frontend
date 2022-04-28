@@ -228,8 +228,8 @@ export default {
         const canBuy = await contract.canUserMint(address.value);
 
         // TODO!!!
-        //commit("setCanUserBuy", canBuy);
-        commit("setCanUserBuy", true); // TODO: comment out this line and uncomment the line above
+        commit("setCanUserBuy", canBuy);
+        //commit("setCanUserBuy", true); // TODO: comment out this line and uncomment the line above
       }
     },
 

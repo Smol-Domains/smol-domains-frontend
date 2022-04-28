@@ -80,8 +80,8 @@ export default {
       commit("setWrapperPaused", paused);
 
       // get price
-      const priceMwei = await contract.price();
-      const domainPrice = ethers.utils.formatEther(priceMwei); // $MAGIC
+      const priceWei = await contract.price();
+      const domainPrice = ethers.utils.formatEther(priceWei); // $MAGIC
       commit("setWrapperTldPrice", domainPrice);
       
       //this.chosenAllowance = this.domainPrice;
