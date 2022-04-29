@@ -1,7 +1,23 @@
 <template>
   <div class="container">
 
-    <img :src="getUserImage" class="img-fluid img-thumbnail">
+    <!-- Flip profile images -->
+      <!-- Custom image (TODO: update this one, custom-img-container and custom-img-content) -->
+      <transition name="flip">
+        <div v-if="flipSide=='front'" @click="flipImage" class="img-thumbnail custom-img-container">
+          <div class="custom-img-content">
+            <div><span>{{getNameOrAddress}}</span></div>
+          </div>
+        </div>
+      </transition> 
+      <!-- END Custom image -->
+
+      <!-- Punk Domain image -->
+      <transition name="flip">
+        <img v-if="flipSide=='back'" @click="flipImage" :src="getUserImage" class="img-fluid img-thumbnail">
+      </transition>
+      <!-- END Punk Domain image -->
+    <!-- END Flip profile images -->
 
     <h3 class="text-center mt-2 text-break">
       {{getNameOrAddress}}
@@ -42,6 +58,20 @@ import { mapGetters } from 'vuex';
 export default {
   name: "Sidebar",
 
+  data() {
+    return {
+      flipSide: "front", // front-custom, back-punk
+    }
+  },
+
+  created() {
+    const storedFlipSide = localStorage.getItem("flipSide");
+
+    if (storedFlipSide === "front" || storedFlipSide === "back") {
+      this.flipSide = storedFlipSide;
+    }
+  },
+
   computed: {
     ...mapGetters("user", ["getUserSelectedName", "getUserShortAddress", "getUserSelectedNameImageSvg"]),
 
@@ -60,6 +90,18 @@ export default {
         return "https://upload.wikimedia.org/wikipedia/commons/b/bc/Unknown_person.jpg"
       }
       
+    }
+  },
+
+  methods: {
+    flipImage() {
+      if (this.flipSide === "front") {
+        this.flipSide = "back";
+        localStorage.setItem("flipSide", "back");
+      } else {
+        this.flipSide = "front";
+        localStorage.setItem("flipSide", "front");
+      }
     }
   }
 }
@@ -82,6 +124,53 @@ export default {
   color: #DBDFEA;
   border-color: #DBDFEA;
   border-radius: 10px;
+}
+
+.custom-img-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: white;
+}
+
+.custom-img-container:before{
+  content: "";
+  display: block;
+  padding-top: 100%;
+}
+
+.custom-img-content {
+  position:  absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.custom-img-content div {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.custom-img-content span {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  color: black
+}
+
+.flip-enter-active {
+  transition: all 0.4s ease;
+}
+
+.flip-leave-active {
+  display: none;
+}
+
+.flip-enter-from, .flip-leave-from {
+  transform: rotateY(180deg);
+  opacity: 0;
 }
 
 .img-thumbnail {
