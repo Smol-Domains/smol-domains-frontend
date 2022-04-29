@@ -15,7 +15,7 @@ a:hover {
 
 body {
   font-family: 'Roboto Condensed', sans-serif;
-  background: linear-gradient(90deg, hsla(265, 75%, 26%, 1) 0%, hsla(365, 75%, 26%, 1) 100%);
+  background: linear-gradient(0deg, #1B0D23 0%, #0F0613 100%);
   color: #DBDFEA;
 }
 
