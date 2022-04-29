@@ -17,12 +17,12 @@
         <img v-if="flipSide=='back'" @click="flipImage" :src="getUserImage" class="img-fluid img-thumbnail">
       </transition>
       <!-- END Punk Domain image -->
+
+      <div class="text-center" @click="flipImage">
+        <small><i class="bi bi-arrow-repeat"></i></small>
+      </div>
     <!-- END Flip profile images -->
-
-    <h3 class="text-center mt-2 text-break">
-      {{getNameOrAddress}}
-    </h3>
-
+    
     <hr />
 
     <router-link class="btn btn-sidebar text-start" to="/profile">
@@ -130,13 +130,15 @@ export default {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: white;
+  background: transparent;
 }
 
 .custom-img-container:before{
   content: "";
   display: block;
   padding-top: 100%;
+  border: 2px solid white;
+  border-radius: 10px;
 }
 
 .custom-img-content {
@@ -157,7 +159,7 @@ export default {
   display: table-cell;
   text-align: center;
   vertical-align: middle;
-  color: black
+  color: white
 }
 
 .flip-enter-active {
@@ -176,5 +178,6 @@ export default {
 .img-thumbnail {
   border-color: transparent;
   border-radius: 15px;
+  cursor: pointer;
 }
 </style>
