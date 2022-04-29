@@ -63,7 +63,7 @@
         </div>
       </div>
 
-      <Referral />
+      <!--<Referral />-->
 
     </div>
   </div>

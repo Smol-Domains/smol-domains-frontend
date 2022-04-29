@@ -9,17 +9,19 @@
     <span> | </span>
 
     <router-link to="/how">How it works</router-link>
+    
+    <span> | </span>
+
+    <a target="_blank" href="https://punk.domains">Powered by Punk Domains</a>
   </div>
 
   <div class="container-fluid text-center">
 
-    <a class="icons" href="http://docs.punk.domains" target="_blank"><i class="bi bi-journal-text"></i></a>
-
     <a class="icons" target="_blank" href="https://github.com/Smol-Domains"><i class="bi bi-github"></i></a>
 
-    <a class="icons" target="_blank" href="https://discord.gg/8dSrwrAQeu"><i class="bi bi-discord"></i></a>
+    <a class="icons" target="_blank" href="https://discord.gg/"><i class="bi bi-discord"></i></a>
 
-    <a class="icons" target="_blank" href="https://twitter.com/PunkDomains"><i class="bi bi-twitter"></i></a>
+    <a class="icons" target="_blank" href="https://twitter.com/"><i class="bi bi-twitter"></i></a>
     
   </div>
 </template>

@@ -69,7 +69,7 @@
     
   </div>
 
-  <Referral v-if="isActivated" />
+  <!--<Referral v-if="isActivated" />-->
 
 
   <!-- Approve MAGIC Modal -->
@@ -364,6 +364,11 @@ export default {
 
 .buy-button {
   margin-bottom: 50px;
+}
+
+.container {
+  padding-top: 80px;
+  padding-bottom: 100px;
 }
 
 .domain-input {
