@@ -1,20 +1,26 @@
 <template>
-  <div class="container text-center">
-    <h1 class="mt-5 headline">Mint Your .smol Domain!</h1>
+  <div class="container text-center home-gradient ">
+    <div class="text-align-header">
+      <h1 class="strokeme">Mint&nbsp;</h1>
+      <h1 class="strokeme">Your</h1>
+      <h1 class="strokeme smol-text-color">&nbsp;.smol&nbsp;</h1>
+      <h1 class="strokeme">Domain!</h1>
+    </div>
+
 
     <div class="d-flex justify-content-center domain-input-container mb-3 mt-5">
-      <div class="input-group domain-input input-group-lg">
+      <div class="input-group domain-input input-group-lg input-sizing">
         <input
           v-model="chosenDomainName" 
           placeholder="enter domain name"
           type="text" 
-          class="form-control text-end" 
+          class="form-control"
           aria-label="Text input with dropdown button"
         >
 
         <span class="input-group-text tld-addon">
           <span v-if="loading" class="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"></span>
-          <span>.smol</span>
+          <span style="color:#1B0D23;">.smol</span>
         </span>
       </div>
     </div>
@@ -25,9 +31,11 @@
       </small>
     </p>
 
-    <p class="mt-5">
-      Domain price: {{getWrapperTldPrice}} MAGIC
-    </p>
+    <div class="text-align-header">
+      <p class="mt-5 price-text">
+          Domain price: {{getWrapperTldPrice}} MAGIC
+      </p>
+    </div>
 
     <!-- Wrapper contract paused -->
     <button v-if="isActivated && getWrapperPaused" class="btn btn-primary btn-lg mt-3 buy-button" :disabled="true">

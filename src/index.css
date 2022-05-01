@@ -15,7 +15,7 @@ a:hover {
 
 body {
   font-family: 'Roboto Condensed', sans-serif;
-  background: linear-gradient(0deg, #1B0D23 0%, #0F0613 100%);
+  background: #1B0D23;
   color: #DBDFEA;
 }
 
@@ -31,9 +31,17 @@ hr {
   background-color: #DBDFEA;
 }
 
+.background-main {
+  background: linear-gradient(0deg, #1B0D23 0%, #0F0613 100%);
+}
+
+.mt-5 {
+  color: #1B0D23;
+}
+
 .btn-primary, .btn-primary:active, .btn-primary:focus, .btn-primary:disabled {
-  background: transparent;
-  border-color: #DBDFEA;
+  background: #1B0D23;
+  border-color: #1B0D23;
   box-shadow: none;
   color: #DBDFEA;
 }
@@ -58,10 +66,42 @@ hr {
 }
 
 .container {
-  background: transparent;
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #DBDFEA;
+  border: 1px solid #1B0D23;
+  flex-direction: column;
+  background: linear-gradient(180deg, #757475 0%,#7f8081 50%, #757475 100%);
+}
+.home-gradient {
+  background: linear-gradient(180deg, #757475 0%,#909192 50%, #757475 100%);
+}
+
+.strokeme {
+  color: white;
+  text-shadow: 10px 10px 30px rgb(53, 52, 52);
+  font-weight: bold;
+  font-size: 300%;
+}
+
+.price-text {
+  color: white;
+  text-shadow: 1px 1px 10px rgb(53, 52, 52);
+  font-weight: 400;
+  font-size: 120%;
+}
+
+.textsize-medium {
+  font-size: 130%;
+}
+
+.text-align-header {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.smol-text-color {
+  color:#2f1c3a;
 }
 
 .img-thumbnail {
@@ -96,6 +136,7 @@ hr {
   background-color: #741911;
   border: 1px solid #DBDFEA;
 }
+
 
 @media only screen and (max-width: 767px) {
   #sidebar-container {

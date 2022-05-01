@@ -1,7 +1,7 @@
 <template>
   <Navbar />
 
-  <div class="main-container">
+  <div class="main-container background-main">
     <router-view></router-view>
 
     <Footer />
@@ -143,7 +143,7 @@ export default {
 <style scoped>
 .main-container {
   padding: 20px;
-  max-width: 1400px;
+  max-width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
