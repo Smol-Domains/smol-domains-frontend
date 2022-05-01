@@ -77,7 +77,7 @@
 
 <script>
 import { ethers } from 'ethers';
-import { mapGetters } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import { useEthers } from 'vue-dapp';
 import { useToast, TYPE } from "vue-toastification";
 import WaitingToast from "../toasts/WaitingToast.vue";
@@ -98,8 +98,9 @@ export default {
   },
 
   computed: {
-    ...mapGetters("punk", ["getTldAddressesKey", "getTldAddresses", "getTldAbi"]),
+    ...mapGetters("punk", ["getTldAbi"]),
     ...mapGetters("network", ["getBlockExplorerBaseUrl"]),
+    ...mapGetters("smol", ["getSmolTldAddress"]),
 
     customData() {
       if (this.domainData) {
@@ -120,6 +121,8 @@ export default {
   },
 
   methods: {
+    ...mapActions("user", ["fetchSelectedNameData"]),
+
     addField() {
       this.fields.push({dataKey: "", dataValue: ""});
     },
@@ -170,6 +173,7 @@ export default {
               type: TYPE.SUCCESS,
               onClick: () => window.open(this.getBlockExplorerBaseUrl+"/tx/"+tx.hash, '_blank').focus()
             });
+            this.fetchSelectedNameData();
             this.$emit("fetchData");
             this.btnInactive = false;
           } else {
@@ -208,22 +212,10 @@ export default {
     },
 
     setContract() {
-      let tldAddresses = this.getTldAddresses;
-
-      if (!tldAddresses) {
-        const tldAddressesStorage = localStorage.getItem(this.getTldAddressesKey);
-
-        if (tldAddressesStorage) {
-          tldAddresses = JSON.parse(tldAddressesStorage);
-        }
-      }
-
-      if (tldAddresses && JSON.stringify(tldAddresses) != "{}") {
-        const tldAddr = tldAddresses["."+this.tld];
-
+      if (this.address) {
         // construct contract
         const intfc = new ethers.utils.Interface(this.getTldAbi);
-        this.tldContract = new ethers.Contract(tldAddr, intfc, this.signer);
+        this.tldContract = new ethers.Contract(this.getSmolTldAddress, intfc, this.signer);
       }
     }
   },
