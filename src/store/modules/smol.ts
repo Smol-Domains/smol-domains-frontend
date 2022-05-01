@@ -14,7 +14,7 @@ export default {
     smolTldName: ".smol",
     tldAddress: "0xE0d972817e94c5FF9BDc49a63d8927A0bA833E4f",
     tldContract: null,
-    wrapperAddress: "0x7c9A024C5eeed9fE96f8512cd7348245326f4bD7",
+    wrapperAddress: "0x3616d477302587C64Bb8aa7abfc8258c05f75C0E",
     wrapperContract: null,
     wrapperPaused: true,
     wrapperTldPrice: null
