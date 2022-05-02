@@ -40,8 +40,8 @@ hr {
 }
 
 .btn-primary, .btn-primary:active, .btn-primary:focus, .btn-primary:disabled {
-  background: #1B0D23;
-  border-color: #1B0D23;
+  background: #6726A4;
+  border-color: #6726A4;
   box-shadow: none;
   color: #DBDFEA;
 }
@@ -68,24 +68,25 @@ hr {
 .container {
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid #1B0D23;
+  border: 5px solid #8b8a8c;
   flex-direction: column;
-  background: linear-gradient(180deg, #757475 0%,#7f8081 50%, #757475 100%);
+  /* background: linear-gradient(180deg, #757475 0%,#7f8081 50%, #757475 100%); */
+  background: #1f2937;
 }
 .home-gradient {
-  background: linear-gradient(180deg, #757475 0%,#909192 50%, #757475 100%);
+  /* background: linear-gradient(180deg, #757475 0%,#909192 50%, #757475 100%); */
 }
 
 .strokeme {
   color: white;
-  text-shadow: 10px 10px 30px rgb(53, 52, 52);
+  text-shadow: 10px 10px 30px #353434;
   font-weight: bold;
   font-size: 300%;
 }
 
 .price-text {
   color: white;
-  text-shadow: 1px 1px 10px rgb(53, 52, 52);
+  text-shadow: 1px 1px 10px #353434;
   font-weight: 400;
   font-size: 120%;
 }
@@ -101,7 +102,7 @@ hr {
 }
 
 .smol-text-color {
-  color:#2f1c3a;
+  color:#6726A4;
 }
 
 .img-thumbnail {
