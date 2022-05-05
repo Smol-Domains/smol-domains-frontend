@@ -41,8 +41,8 @@
                 <router-link tag="li" class="dropdown-item" to="/send-tokens">Send tokens</router-link>
                 <router-link tag="li" class="dropdown-item" to="/about">About</router-link>
                 <router-link tag="li" class="dropdown-item" to="/how">How it works</router-link>
-                <router-link tag="li" class="dropdown-item" to="/browser">Browser extension</router-link>
-                <li class="dropdown-item" @click="openUrl('http://docs.punk.domains')">Docs</li>
+                <!-- <router-link tag="li" class="dropdown-item" to="/browser">Browser extension</router-link> -->
+                <li class="dropdown-item" @click="openUrl('https://docs.smol.domains/')">Docs</li>
                 <li class="dropdown-item" @click="logout">Disconnect</li>
               </ul>
             </div>

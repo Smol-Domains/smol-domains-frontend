@@ -10,7 +10,7 @@
     -->
 
     <p class="logo">
-      Punk.Domains
+      Smol.Domains
     </p>
 
     <div class="flex flex-row justify-center space-x-4">

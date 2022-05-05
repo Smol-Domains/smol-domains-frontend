@@ -12,7 +12,7 @@
     
     <span> | </span>
 
-    <a target="_blank" href="https://punk.domains">Powered by Punk Domains</a>
+    <a target="_blank" href="https://smol.domains">Powered by Smol Domains</a>
   </div>
 
   <div class="container-fluid text-center">

@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 
 import About from './views/About.vue'
 import Allowance from './views/Allowance.vue'
-import BrowserExtension from './views/BrowserExtension.vue'
+// import BrowserExtension from './views/BrowserExtension.vue'
 import DomainDetails from './views/DomainDetails.vue'
 import Home from './views/Home.vue'
 import HowItWorks from './views/HowItWorks.vue'
@@ -29,11 +29,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Allowance',
     component: Allowance,
   },
-  {
-    path: '/browser',
-    name: 'BrowserExtension',
-    component: BrowserExtension,
-  },
+  // {
+  //   path: '/browser',
+  //   name: 'BrowserExtension',
+  //   component: BrowserExtension,
+  // },
   {
     path: '/domain/:domainChain/:tld/:domainName',
     name: 'DomainDetails',

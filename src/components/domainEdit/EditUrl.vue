@@ -24,10 +24,10 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>
+          <!-- <p>
             Anyone who's using the Punk browser extension will get redirected to this URL if they enter 
             {{domainName}}.{{tld}} in the browser URL bar.
-          </p>
+          </p> -->
 
           <div class="mb-3" v-if="domainData">
             <input
