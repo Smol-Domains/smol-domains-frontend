@@ -33,7 +33,7 @@ app.use(router)
 app.use(store)
 
 app.use(VueDapp, {
-  infuraId: '',
+  infuraId: import.meta.env.VITE_INFURA_KEY,
 })
 
 app.use(Toast, options);
