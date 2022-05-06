@@ -9,12 +9,8 @@ import Toast, { POSITION, TYPE } from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import './index.css'
 import { VueDapp } from 'vue-dapp'
-import VueGtag from 'vue-gtag'
 
-
-const app = createApp(App).use(VueGtag, {
-  config: { id: "G-VGZF9SCYXB" }
-});
+const app = createApp(App);
 
 const options = {
   timeout: 5000,
