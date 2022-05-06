@@ -21,7 +21,7 @@
 
     <a class="icons" target="_blank" href="https://discord.gg/"><i class="bi bi-discord"></i></a>
 
-    <a class="icons" target="_blank" href="https://twitter.com/"><i class="bi bi-twitter"></i></a>
+    <a class="icons" target="_blank" href="https://twitter.com/smoldomains"><i class="bi bi-twitter"></i></a>
     
   </div>
 </template>
