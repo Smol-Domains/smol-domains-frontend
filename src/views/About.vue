@@ -5,7 +5,8 @@
   <div class="row mt-3">
     <div class="col-md-8 offset-md-2">
       <p>
-        ...
+        Read the Docs 
+        <a href="https://docs.smol.domains/">Here!</a>
       </p>
 
     </div>
