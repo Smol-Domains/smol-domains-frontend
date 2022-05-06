@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/assets/favicon.png" />
+    <link rel="icon" href="/assets/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Smol Domains - Permissionless Web3 Domains</title>
 
-    <meta name="description" content="Smol Domains is a decentralized domain name service with plenty of top-level domains (.web3, .wagmi, .ape, etc.) and running on multiple blockchains.">
-    <meta name="keywords" content="web3, domains, domain, DNS, TLD, blockchain, crypto, ethereum, polygon, optimism, arbitrum, gnosis, chain">
+    <meta name="description" content="Decentralized domain name service with .smol domain running on arbitrum blockchain.">
+    <meta name="keywords" content="smol, domains, domain, DNS, TLD, blockchain, crypto, smolverse, smol brains, smol bodies, arbitrum, chain">
     <meta name="author" content="Tempe Techie">
 
     <meta property="og:title" content="Smol Domains - Permissionless Web3 Domains" />
@@ -22,21 +22,23 @@
     <meta name="twitter:description" content="Decentralized domain name service with .smol domain running on arbitrum blockchain.">
     <meta name="twitter:image" content="https://smol.domains/assets/cover.png">
 
-    <!-- Twitter universal website tag code -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VGZF9SCYXB"></script>
     <script>
-      !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
-      },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='//static.ads-twitter.com/uwt.js',
-      a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
-      // Insert Twitter Pixel ID and Standard Event data below
-      twq('init','o825r');
-      twq('track','PageView');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){window.dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-VGZF9SCYXB');
     </script>
-    <!-- End Twitter universal website tag code -->
 
   </head>
   <body>
     <div id="app"></div>
+    <script src="/assets/js/walletConnect.js"></script>
+    <!--
     <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.6.5/dist/umd/index.min.js"></script>
+    -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
