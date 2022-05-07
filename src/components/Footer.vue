@@ -8,14 +8,12 @@
     
     <span> | </span>
 
-    <router-link to="/how">How it works</router-link>
-    
-    <span> | </span>
-
-    <a target="_blank" href="https://smol.domains">Powered by Smol Domains</a>
+    <a target="_blank" href="https://punk.domains">Powered by Punk Domains</a>
   </div>
 
   <div class="container-fluid text-center">
+
+    <a class="icons" href="http://docs.smol.domains" target="_blank"><i class="bi bi-journal-text"></i></a>
 
     <a class="icons" target="_blank" href="https://github.com/Smol-Domains"><i class="bi bi-github"></i></a>
 
