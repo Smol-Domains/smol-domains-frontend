@@ -107,6 +107,7 @@ import MyDomain from '../components/MyDomain.vue';
 import Sidebar from '../components/Sidebar.vue';
 import Referral from '../components/Referral.vue';
 import erc20Abi from '../abi/Erc20.json';
+import tldAbi from '../abi/PunkTLD.json';
 import useChainHelpers from "../hooks/useChainHelpers";
 
 export default {
