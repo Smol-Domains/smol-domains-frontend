@@ -113,7 +113,8 @@ export default {
   },
 
   computed: {
-    ...mapGetters("punk", ["getTldAddressesKey", "getTldAddresses", "getTldAbi"]),
+    ...mapGetters("punk", ["getTldAbi"]),
+    ...mapGetters("smol", ["getSmolTldAddress"]),
     ...mapGetters("network", ["getBlockExplorerBaseUrl", "getChainId", "getSupportedNetworks", "isNetworkSupported"]),
 
     holderData() {
@@ -155,19 +156,22 @@ export default {
           if (this.domainData.data) {
             const customData = JSON.parse(this.domainData.data);
 
-            if (customData.imgAddress && !customData.imgAddress.startsWith("0x")) {
-              this.pfpImage = customData.imgAddress.replace("ipfs://", "https://ipfs.io/ipfs/");
-              noImg = false;
-            } else if (customData.imgAddress) {
-              // fetch image URL of that PFP
-              const pfpInterface = new ethers.utils.Interface([
-                "function tokenURI(uint256 tokenId) public view returns (string memory)"
-              ]);
-              const pfpContract = new ethers.Contract(customData.imgAddress, pfpInterface, fProvider);
-              metadata = await pfpContract.tokenURI(customData.imgTokenId);
-            } else {
-              // get contract image for that token ID
-              metadata = await tldContractRead.tokenURI(customData.imgTokenId);
+            if (customData.imgAddress) {
+              if (!customData.imgAddress.startsWith("0x")) {
+                this.pfpImage = customData.imgAddress.replace("ipfs://", "https://ipfs.io/ipfs/");
+                noImg = false;
+              } else if (customData.imgAddress) {
+                // fetch image URL of that PFP
+                const pfpInterface = new ethers.utils.Interface([
+                  "function tokenURI(uint256 tokenId) public view returns (string memory)"
+                ]);
+                
+                const pfpContract = new ethers.Contract(customData.imgAddress, pfpInterface, fProvider);
+                metadata = await pfpContract.tokenURI(customData.imgTokenId);
+              } else {
+                // get contract image for that token ID
+                metadata = await tldContractRead.tokenURI(customData.imgTokenId);
+              }
             }
 
             if (metadata.includes("ipfs://")) {
@@ -200,23 +204,9 @@ export default {
     },
 
     setContract() {
-      let tldAddresses = this.getTldAddresses;
-
-      if (!tldAddresses) {
-        const tldAddressesStorage = localStorage.getItem(this.getTldAddressesKey);
-
-        if (tldAddressesStorage) {
-          tldAddresses = JSON.parse(tldAddressesStorage);
-        }
-      }
-
-      if (tldAddresses && JSON.stringify(tldAddresses) != "{}") {
-        const tldAddr = tldAddresses["."+this.tld];
-
-        // construct contract
-        const intfc = new ethers.utils.Interface(this.getTldAbi);
-        this.tldContract = new ethers.Contract(tldAddr, intfc, this.signer);
-      }
+      // construct contract
+      const intfc = new ethers.utils.Interface(this.getTldAbi);
+      this.tldContract = new ethers.Contract(this.getSmolTldAddress, intfc, this.signer);
     }
   },
 
