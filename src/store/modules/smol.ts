@@ -10,17 +10,21 @@ export default {
   namespaced: true,
   
   state: () => ({ 
+    discountPercentage: 0,
     smolTldAddress: tlds["42161"][".smol"],
     smolTldName: ".smol",
     tldAddress: "0xE0d972817e94c5FF9BDc49a63d8927A0bA833E4f",
     tldContract: null,
-    wrapperAddress: "0x3616d477302587C64Bb8aa7abfc8258c05f75C0E",
+    wrapperAddress: "0x08114885E510e33995F40f00735FA532a7391024",
     wrapperContract: null,
     wrapperPaused: true,
     wrapperTldPrice: null
   }),
 
   getters: { 
+    getSmolDiscountPercentage(state) {
+      return state.discountPercentage;
+    },
     getSmolTldAddress(state) {
       return state.smolTldAddress;
     },
@@ -56,6 +60,10 @@ export default {
       state.wrapperContract = contract;
     },
 
+    setDiscountPercentage(state, percentage) {
+      state.discountPercentage = percentage;
+    },
+
     setWrapperPaused(state, paused) {
       state.wrapperPaused = paused;
     },
@@ -83,6 +91,11 @@ export default {
       const priceWei = await contract.price();
       const domainPrice = ethers.utils.formatEther(priceWei); // $MAGIC
       commit("setWrapperTldPrice", domainPrice);
+
+      // get discount
+      const discountBps = await contract.discountBps();
+      const discountPercentage = Number(discountBps) / 100; // %
+      commit("setDiscountPercentage", discountPercentage);
       
       //this.chosenAllowance = this.domainPrice;
     }

@@ -12,6 +12,7 @@ export default {
   
   state: () => ({ 
     canUserBuy: false,
+    discountEligible: false,
     selectedName: null, // domain name that appears as the main profile name
     selectedNameData: null,
     selectedNameImageSvg: null,
@@ -31,6 +32,9 @@ export default {
   getters: { 
     getCanUserBuy(state) {
       return state.canUserBuy;
+    },
+    getDiscountEligible(state) {
+      return state.discountEligible;
     },
     getUserAddress(state) {
       return state.userAddress;
@@ -106,6 +110,10 @@ export default {
 
     setCanUserBuy(state, canBuy) {
       state.canUserBuy = canBuy;
+    },
+
+    setCanGetDiscount(state, eligible) {
+      state.discountEligible = eligible;
     },
 
     setDefaultName(state, defName) {
@@ -226,9 +234,11 @@ export default {
         const contract = new ethers.Contract(rootGetters["smol/getSmolWrapperAddress"], intfc, signer.value);
 
         const canBuy = await contract.canUserMint(address.value);
+        const canGetDiscount = await contract.canGetDiscount(address.value);
 
         // TODO!!!
         commit("setCanUserBuy", canBuy);
+        commit("setCanGetDiscount", canGetDiscount);
         //commit("setCanUserBuy", true); // TODO: comment out this line and uncomment the line above
       }
     },

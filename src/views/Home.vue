@@ -33,7 +33,7 @@
 
     <div class="text-align-header">
       <p class="mt-5 price-text">
-          Domain price: {{getWrapperTldPrice}} MAGIC
+          Domain price: {{getPriceWithDiscount}} MAGIC
       </p>
     </div>
 
@@ -92,7 +92,7 @@
           <div class="mb-3">
             <p>
               If you plan to mint multiple domains, consider giving the minting contract a higher MAGIC approval. 
-              With each domain buy, the total approval amount is reduced by {{getWrapperTldPrice}} MAGIC. (Worry not, 
+              With each domain buy, the total approval amount is reduced by {{getPriceWithDiscount}} MAGIC. (Worry not, 
               redundant approval amount can later be reduced to 0.)
             </p>
 
@@ -147,16 +147,26 @@ export default {
   },
 
   created() {
-    this.chosenAllowance = this.getWrapperTldPrice;
+    this.chosenAllowance = this.getPriceWithDiscount;
   },
 
   computed: {
-    ...mapGetters("user", ["getMagicAddress", "getMagicAllowance", "getMagicBalance", "getCanUserBuy"]),
+    ...mapGetters("user", ["getMagicAddress", "getMagicAllowance", "getMagicBalance", "getCanUserBuy", "getDiscountEligible"]),
     ...mapGetters("network", ["getBlockExplorerBaseUrl"]),
-    ...mapGetters("smol", ["getSmolWrapperAddress", "getSmolTldContract", "getWrapperTldPrice", "getWrapperPaused"]),
+    ...mapGetters("smol", ["getSmolWrapperAddress", "getSmolTldContract", "getWrapperTldPrice", "getWrapperPaused", "getSmolDiscountPercentage"]),
+
+    getPriceWithDiscount() {
+      if (this.getSmolDiscountPercentage > 0 && this.getDiscountEligible) {
+        // if user is eligible for a discount, show the discounted price
+        const perc = Number(this.getSmolDiscountPercentage) / 100;
+        return (Number(this.getWrapperTldPrice) - (Number(this.getWrapperTldPrice)*perc));
+      }
+
+      return this.getWrapperTldPrice;
+    },
 
     selectedAllowanceTooLow() {
-      if (Number(this.chosenAllowance) >= Number(this.getWrapperTldPrice)) {
+      if (Number(this.chosenAllowance) >= Number(this.getPriceWithDiscount)) {
         return false;
       }
 
@@ -168,8 +178,8 @@ export default {
     },
 
     hasEnoughMagicAllowance() {
-      if (this.address && Number(this.getWrapperTldPrice) > 0 && Number(this.getMagicBalance) > 0) {
-        if (Number(this.getMagicAllowance) >= Number(this.getWrapperTldPrice)) {
+      if (this.address && Number(this.getPriceWithDiscount) > 0 && Number(this.getMagicBalance) > 0) {
+        if (Number(this.getMagicAllowance) >= Number(this.getPriceWithDiscount)) {
           return true;
         }
       }
@@ -178,8 +188,8 @@ export default {
     },
 
     hasUserEnoughMagic() {
-      if (this.address && Number(this.getWrapperTldPrice) > 0 && Number(this.getMagicBalance) > 0) {
-        if (Number(this.getMagicBalance) >= Number(this.getWrapperTldPrice)) {
+      if (this.address && Number(this.getPriceWithDiscount) > 0 && Number(this.getMagicBalance) > 0) {
+        if (Number(this.getMagicBalance) >= Number(this.getPriceWithDiscount)) {
           return true;
         }
       }
@@ -355,7 +365,7 @@ export default {
 
   watch: {
     getWrapperTldPrice(newVal, oldVal) {
-      this.chosenAllowance = this.getWrapperTldPrice;
+      this.chosenAllowance = this.getPriceWithDiscount;
     }
   }
 }
