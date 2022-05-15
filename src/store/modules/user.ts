@@ -265,16 +265,18 @@ export default {
           if (nameData.data) {
             const customData = JSON.parse(nameData.data);
           
-            if (customData.imgAddress && !customData.imgAddress.startsWith("0x")) {
-              commit("setSelectedNameImageSvg", customData.imgAddress.replace("ipfs://", "https://ipfs.io/ipfs/"));
-              imgFound = true;
-            } else if (customData.imgAddress) {
-              // fetch image URL of that PFP
-              const pfpInterface = new ethers.utils.Interface([
-                "function tokenURI(uint256 tokenId) public view returns (string memory)"
-              ]);
-              const pfpContract = new ethers.Contract(customData.imgAddress, pfpInterface, signer.value);
-              metadata = await pfpContract.tokenURI(customData.imgTokenId);
+            if (customData.imgAddress) {
+              if (!customData.imgAddress.startsWith("0x")) {
+                commit("setSelectedNameImageSvg", customData.imgAddress.replace("ipfs://", "https://ipfs.io/ipfs/"));
+                imgFound = true;
+              } else if (customData.imgAddress) {
+                // fetch image URL of that PFP
+                const pfpInterface = new ethers.utils.Interface([
+                  "function tokenURI(uint256 tokenId) public view returns (string memory)"
+                ]);
+                const pfpContract = new ethers.Contract(customData.imgAddress, pfpInterface, signer.value);
+                metadata = await pfpContract.tokenURI(customData.imgTokenId);
+              }
             }
 
             if (metadata.includes("ipfs://")) {

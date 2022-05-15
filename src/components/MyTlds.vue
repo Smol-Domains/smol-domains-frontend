@@ -44,7 +44,8 @@ export default {
 
   computed: {
     ...mapGetters("network", ["getChainId"]),
-    ...mapGetters("punk", ["getTlds", "getTldAddresses", "getTldAbi"]),
+    ...mapGetters("punk", ["getTlds", "getTldAbi"]),
+    ...mapGetters("smol", ["getSmolTldAddress"]),
   },
 
   methods: {
@@ -55,7 +56,7 @@ export default {
         for (let tld of this.getTlds) {
           // construct contract
           const intfc = new ethers.utils.Interface(this.getTldAbi);
-          const tldContract = new ethers.Contract(this.getTldAddresses[tld], intfc, this.signer);
+          const tldContract = new ethers.Contract(this.getSmolTldAddress, intfc, this.signer);
 
           const tldOwner = await tldContract.owner();
 
