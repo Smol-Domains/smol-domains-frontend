@@ -43,7 +43,7 @@
 
             <table class="table table-hover mt-4 mb-4">
               <tbody>
-                <tr v-for="domainName in getUserAllDomainNames">
+                <tr v-for="domainName in getUserAllDomainNames" :key="domainName">
                   <MyDomain :domain="domainName" />
                 </tr>
               </tbody>
@@ -106,7 +106,6 @@ import { useToast, TYPE } from "vue-toastification";
 import MyDomain from '../components/MyDomain.vue';
 import Sidebar from '../components/Sidebar.vue';
 import Referral from '../components/Referral.vue';
-import erc20Abi from '../abi/Erc20.json';
 import tldAbi from '../abi/PunkTLD.json';
 import useChainHelpers from "../hooks/useChainHelpers";
 
