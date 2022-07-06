@@ -1,11 +1,12 @@
 <template>
-  <div class="mb-3 row domain-data mt-4" v-if="customData" v-for="(dataValue, dataKey) in customData">
+  <div class="mb-3 row domain-data mt-4" v-if="customData" :key="dataKey" v-for="(dataValue, dataKey) in customData">
     <div class="col-sm-3 punk-title">
       {{dataKey.charAt(0).toUpperCase() + dataKey.slice(1)}}
     </div>
 
-    <div class="col-sm-9 punk-text">
-      <span v-if="dataKey=='url'"><a target="_blank" :href="dataValue">{{dataValue}}</a></span>
+    <div class="col-sm-9 punk-text text-break">
+      <span v-if="dataKey=='imgAddress' && dataValue.startsWith('http')"><a target="_blank" :href="dataValue">{{shortUrl(dataValue)}}</a></span>
+      <span v-else-if="dataKey=='url'"><a target="_blank" :href="dataValue">{{dataValue}}</a></span>
       <span v-else-if="dataKey=='twitter'"><a target="_blank" :href="getTwitterUrl(dataValue)">{{dataValue}}</a></span>
       <span v-else>{{dataValue}}</span>
     </div>
@@ -117,7 +118,7 @@ export default {
       if (this.domainData) {
         return String(this.address).toLowerCase() === String(this.domainData.holder).toLowerCase();
       }
-    },
+    }
   },
 
   methods: {
@@ -129,6 +130,19 @@ export default {
 
     removeField(index) {
       this.fields.splice(index, 1);
+    },
+
+    shortUrl(u) {
+      if (typeof(u) === "string") {
+        if (u.length > 42) {
+          let uend = u.slice(u.length - 15);
+          let ustart = u.substr(0, 32);
+          return ustart + '...' + uend;
+        }
+      }
+      
+
+      return u;
     },
 
     async editData() {

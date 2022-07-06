@@ -32,7 +32,7 @@
               </div>
 
               <div class="col-sm-9 punk-text text-break">
-                {{getChainName(Number(domainChain))}} (this is where domain is registered)
+                {{getChainName(Number(domainChain))}}
               </div>
             </div>
 

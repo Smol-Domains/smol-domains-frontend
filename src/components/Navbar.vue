@@ -14,6 +14,10 @@
         
         <div class="d-flex ms-auto">
           <div v-if="isActivated" class="">
+
+            <div class="btn-group mx-2 navbar-menu-btn navbar-other-item">
+              <a class="btn btn-primary" target="_blank" href="https://trove.treasure.lol/collection/smol-domains">Trade domains</a>
+            </div>
           
             <div class="btn-group mx-2">
               <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
