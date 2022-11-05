@@ -17,7 +17,7 @@
 
     <a class="icons" target="_blank" href="https://github.com/Smol-Domains"><i class="bi bi-github"></i></a>
 
-    <a class="icons" target="_blank" href="https://discord.gg/TjaXwz4cYY"><i class="bi bi-discord"></i></a>
+    <a class="icons" target="_blank" href="https://discord.gg/MXFc85SqfX"><i class="bi bi-discord"></i></a>
 
     <a class="icons" target="_blank" href="https://twitter.com/SmolDomains"><i class="bi bi-twitter"></i></a>
     
