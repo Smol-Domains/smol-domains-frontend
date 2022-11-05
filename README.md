@@ -11,16 +11,6 @@ npm install
 npm run dev
 ```
 
-## .env (important!)
-
-Create a .env file and enter the following in it:
-
-```bash
-VITE_ALCHEMY_ARBITRUM_KEY=key-from-alchemy
-```
-
-If you don't create the .env file with that variable, the web app will not properly function on your localhost. The variable is also needed in the production environment.
-
 ## Branches & deployment
 
 - **Important:** Never commit directly to the `main` branch.
